@@ -1,1 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Python Container-Based Framework - A secure, scalable way to manage isolated Python environments with Docker, webhooks, and admin control.">
+    <meta name="author" content="Your Name">
+    <title>Python Container-Based Framework</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f4f9;
+            color: #333;
+        }
+        header {
+            background: #0077cc;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        header h1 {
+            font-size: 2.5em;
+            margin: 0;
+            letter-spacing: 2px;
+        }
+        nav {
+            margin: 20px 0;
+            text-align: center;
+        }
+        nav a {
+            color: #0077cc;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 30px auto;
+        }
+        .intro {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .intro h2 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        .intro p {
+            font-size: 1.2em;
+            color: #555;
+        }
+        .section {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-bottom: 40px;
+        }
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 30%;
+            margin-bottom: 20px;
+            transition: transform 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-10px);
+        }
+        .card h3 {
+            color: #0077cc;
+            margin-bottom: 15px;
+        }
+        .card p {
+            color: #666;
+        }
+        footer {
+            background: #0077cc;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+        .animate-fadein {
+            animation: fadeIn 1s ease-in-out;
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        @media (max-width: 768px) {
+            .card {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
 
+    <header>
+        <h1 class="animate__animated animate__fadeInDown">Python Container-Based Framework</h1>
+    </header>
+
+    <nav>
+        <a href="#features">Features</a>
+        <a href="#setup">Setup</a>
+        <a href="#demo">Live Demo</a>
+        <a href="#contact">Contact</a>
+    </nav>
+
+    <div class="container">
+        <!-- Intro Section -->
+        <section class="intro">
+            <h2 class="animate-fadein">Welcome to the Python Container-Based Framework</h2>
+            <p class="animate-fadein">
+                A secure, scalable, and flexible framework that lets you spin up isolated Python environments via Docker, each accessible through webhooks. Control resources, manage uptime, and keep everything running smoothly from a custom admin dashboard.
+            </p>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="section">
+            <div class="card animate__animated animate__fadeInLeft">
+                <h3>Isolated Environments</h3>
+                <p>Each container is sandboxed and independent, offering complete isolation with no interference between containers.</p>
+            </div>
+            <div class="card animate__animated animate__fadeInUp">
+                <h3>Admin Dashboard</h3>
+                <p>Monitor container status, uptime, resource usage, and manage all containers from one central location.</p>
+            </div>
+            <div class="card animate__animated animate__fadeInRight">
+                <h3>Resource Limits</h3>
+                <p>Control memory, CPU, and network bandwidth for each container to ensure no single process consumes excessive resources.</p>
+            </div>
+        </section>
+
+        <!-- Setup Section -->
+        <section id="setup" class="intro">
+            <h2 class="animate-fadein">Setup & Installation</h2>
+            <p class="animate-fadein">
+                Ready to get started? Follow these simple steps to install and run the Python Container-Based Framework:
+            </p>
+            <pre class="animate__animated animate__fadeInUp" style="background:#f4f4f9; padding:15px; border-radius:10px; box-shadow:0 4px 15px rgba(0,0,0,0.1);">
+# Step 1: Clone the repository
+git clone https://github.com/your-repo/python-container-framework.git
+cd python-container-framework
+
+# Step 2: Build the custom Docker image
+docker build -t my-python-container .
+
+# Step 3: Start the Flask app
+python app.py
+            </pre>
+        </section>
+
+        <!-- Live Demo Section -->
+        <section id="demo" class="section">
+            <div class="intro">
+                <h2 class="animate-fadein">Live Demo</h2>
+                <p class="animate-fadein">See the framework in action! Watch containers spin up and experience the admin dashboard in real-time.</p>
+            </div>
+            <div class="card animate__animated animate__zoomIn">
+                <h3>Live Dashboard</h3>
+                <p>Check out the demo and monitor container status, connections, and resources dynamically.</p>
+                <a href="https://demo-link-here" style="color: #0077cc;">Try the Live Demo</a>
+            </div>
+        </section>
+
+    </div>
+
+    <footer>
+        <p>© 2024 Python Container-Based Framework. Built with love by [Your Name]</p>
+    </footer>
+
+    <script>
+        // Add some scroll animation or interactivity
+        document.addEventListener('DOMContentLoaded', function () {
+            let elements = document.querySelectorAll('.animate-fadein');
+            elements.forEach(el => {
+                el.style.opacity = 0;
+                window.addEventListener('scroll', function () {
+                    let elPosition = el.getBoundingClientRect().top;
+                    let screenPosition = window.innerHeight / 1.2;
+                    if (elPosition < screenPosition) {
+                        el.style.opacity = 1;
+                        el.style.transform = 'translateY(0)';
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>

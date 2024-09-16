@@ -1,36 +1,120 @@
-# Flask Python Environment Container Management
+### Flask Python Environment Container Management ###
 
-## Description
 
-This project is a Flask-based framework for managing isolated Python environments using Docker containers. It includes the following features:
+#Overview
+This project is a Flask-based web application that allows you to create, manage, and monitor isolated Python environments in Docker containers. Each container is sandboxed from others and the host system, ensuring safe and independent execution environments for users. The containers are accessible via webhooks, allowing users to interact with their Python environments through a web interface. The system also provides an admin dashboard for monitoring HTTP/HTTPS requests, managing resources, and setting limits on each container.
 
-- Create independent, sandboxed Python containers accessible via webhooks.
-- Install verified Python packages using `pip` within these containers.
-- Monitor HTTP/HTTPS requests from each container, sanitize them, and log them for admin review.
-- Admin interface for viewing container status, monitoring requests, and adjusting container limits.
+Features
+1. Container Management
+Create fully isolated Python containers.
+Each container is pre-configured with basic tools, including pip, allowing users to install verified Python packages.
+Containers are spun up using Docker, each running its own Python environment.
+Container isolation ensures that no user can access or interfere with another container.
+Containers have resource limits (memory and CPU), configurable by the admin.
+2. Monitored Webhooks
+HTTP/HTTPS requests sent from containers are monitored and sanitized to ensure security.
+All outgoing requests are logged, including details such as method, URL, headers, and body content.
+Admins can review all monitored requests through a web-based interface.
+3. Resource Control
+Admins can configure limits for each container, including memory (mem_limit) and CPU (cpu_quota).
+Containers are restricted from accessing the internet except for verified sources when installing pip packages.
+4. Admin Dashboard
+The system includes an admin panel where admins can:
+View the status of all active containers.
+Monitor and review all HTTP/HTTPS requests sent by the containers.
+Set or modify resource limits for each container.
+5. Pip Package Verification
+The system supports installing Python packages via pip, but only verified packages can be installed.
+Admins can maintain a list of allowed packages, ensuring that users cannot install potentially harmful or unverified packages.
+Getting Started
+Prerequisites
+Before you start, ensure that Docker is installed on your system, and that you have Python 3.9+ and pip installed.
 
-## Features
+Setup Instructions
+Clone the repository:
 
-1. **Container Management**:
-   - Create, stop, and monitor Docker containers.
-   - Each container is isolated from others and the main system.
-   - Containers have limited network access, restricted to verified sources for `pip` installations.
+bash
+Copy code
+git clone https://github.com/unaveragetech/flask-container-management.git
+cd flask-container-management
+Install the required Python dependencies:
 
-2. **Monitored Webhooks**:
-   - Sanitize and monitor outgoing HTTP/HTTPS requests.
-   - View logs in JSON format or through a user-friendly admin HTML page.
+bash
+Copy code
+pip install -r requirements.txt
+Build the Docker image:
 
-3. **Resource Limits**:
-   - Set memory and CPU limits for each container via the admin panel.
+Run the following command to build the Docker image. This image is based on Python 3.9 and includes pip pre-installed.
 
-4. **Admin Panel**:
-   - View and manage containers through a web UI.
-   - View monitored requests via an HTML table or JSON API.
+bash
+Copy code
+docker build -t my-python-container .
+Run the Flask app:
 
-## Setup
+After building the image, start the Flask application using:
 
-1. **Clone the repository**:
+bash
+Copy code
+python app.py
+Access the Admin Dashboard:
 
-   ```bash
-   [git clone https://github.com/your-repo/flask-container-management.git](https://github.com/unaveragetech/flask-container-management.git)
-   cd flask-container-management
+Admin Monitoring (JSON): http://localhost:5000/admin/monitoring
+Admin Monitoring (HTML): http://localhost:5000/admin/monitoring/page
+Use these pages to monitor all outgoing HTTP/HTTPS requests and manage the system.
+
+Detailed Features
+Container Lifecycle
+Containers are created with Docker’s python:3.9-slim base image.
+Each container is configured with 512MB of memory and a CPU limit of 0.5 cores by default. These values can be adjusted by the system admin.
+Containers can be created, started, and stopped through the Flask API. The admin can manage container resources using the /admin/container/<container_id>/limits endpoint.
+Monitored HTTP/HTTPS Requests
+All outgoing requests from containers are intercepted and logged.
+Admins can view these requests in both JSON and HTML formats.
+The logs include information such as:
+HTTP method (GET, POST, etc.)
+URL requested
+Headers and body content
+Timestamp of the request
+Resource Management
+The system allows the admin to set limits on container memory and CPU usage. This ensures that no container consumes excessive resources.
+Admins can update container limits through the /admin/container/<container_id>/limits route.
+Verified Pip Packages
+By default, containers have limited access to external networks to ensure security.
+However, verified pip packages can still be installed within containers. The list of verified packages is managed within the system.
+Security Measures
+Network Isolation: Containers are restricted to a specific network, limiting external communication.
+Request Monitoring: Outgoing HTTP/HTTPS requests are sanitized and logged, allowing for auditability.
+Pip Package Control: Only verified packages can be installed, ensuring that users cannot install arbitrary or harmful software.
+API Endpoints
+Endpoint	Method	Description
+/create_container	POST	Create a new Python environment container.
+/install_package	POST	Install a verified pip package in a container.
+/container/<container_id>/status	GET	Retrieve the status of a container.
+/admin/monitoring	GET	View logs of monitored HTTP/HTTPS requests (JSON).
+/admin/monitoring/page	GET	View logs of monitored HTTP/HTTPS requests (HTML).
+/admin/container/<container_id>/limits	POST	Set memory and CPU limits for a container.
+Example: Creating a New Container
+To create a new container, send a POST request to /create_container with the following JSON body:
+
+json
+Copy code
+{
+  "name": "python_container_1"
+}
+Example: Installing a Verified Package
+To install a verified pip package, send a POST request to /install_package with the following JSON body:
+
+json
+Copy code
+{
+  "container_id": "your-container-id",
+  "package_name": "requests"
+}
+Contributing
+Feel free to open issues or submit pull requests if you have improvements, bug fixes, or other suggestions for this project.
+
+License
+This project is licensed under the MIT License.
+
+You can clone the project from the repository here:
+git clone https://github.com/unaveragetech/flask-container-management.git

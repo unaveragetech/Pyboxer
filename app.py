@@ -1,3 +1,20 @@
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env
+load_dotenv()
+
+# Verify Docker environment variables
+docker_host = os.getenv("DOCKER_HOST")
+docker_cert_path = os.getenv("DOCKER_CERT_PATH")
+docker_tls_verify = os.getenv("DOCKER_TLS_VERIFY")
+
+if docker_host and docker_cert_path and docker_tls_verify:
+    print("Docker environment variables are set correctly.")
+else:
+    print("Docker environment variables are missing or incorrect.")
+
+
 import time
 import docker
 from flask import Flask, request, jsonify, render_template

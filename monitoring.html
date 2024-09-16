@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitored HTTP/HTTPS Requests</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>Monitored HTTP/HTTPS Requests</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Method</th>
+                <th>URL</th>
+                <th>Headers</th>
+                <th>Body</th>
+                <th>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in logs %}
+            <tr>
+                <td>{{ log.method }}</td>
+                <td>{{ log.url }}</td>
+                <td>{{ log.headers }}</td>
+                <td>{{ log.body }}</td>
+                <td>{{ log.timestamp | safe }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

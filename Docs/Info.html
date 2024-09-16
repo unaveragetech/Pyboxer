@@ -1,0 +1,240 @@
+
+---
+
+# Python Container-Based Framework Documentation
+
+Welcome to the documentation for the Python Container-Based Framework, designed to deliver secure, sandboxed Python environments accessible via webhooks and controlled through a user-friendly web interface. The project came from a need for flexibility and isolation, especially when handling multiple users in different environments, without compromising security or performance.
+
+This framework is highly customizable, allowing system admins to monitor containers, enforce limits, and spin up environments quickly. Let’s dive into everything, from setup to how it all works, and why.
+
+---
+
+## Table of Contents
+
+1. [Overview](#overview)
+2. [Getting Started](#getting-started)
+3. [Container Management](#container-management)
+4. [Global Configuration Panel](#global-configuration-panel)
+5. [Admin Dashboard](#admin-dashboard)
+6. [Container Resource Limits](#container-resource-limits)
+7. [Docker Setup](#docker-setup)
+
+---
+
+## Overview
+
+This framework creates isolated Python environments using Docker containers, each designed to be fully functional and independent of the others. Each container runs its own Python runtime, with `pip` pre-installed, making it easy for users to install packages and execute code in a secure, restricted environment. Think of it as a way to give users a clean slate, a virtual workspace that resets after use.
+
+### Key Features:
+- **Isolated Python Containers**: Every user gets their own sandboxed Python environment, ensuring no interference between containers.
+- **Admin Dashboard**: Monitor containers, uptime, active connections, and resource usage in real-time.
+- **Resource Limits**: Control memory, CPU, and network bandwidth for each container, with the ability to adjust system-wide or per-container.
+- **Pre-installed Python Tools**: All containers come with `pip`, `setuptools`, `virtualenv`, and other useful utilities.
+- **Webhooks for Access**: Containers are exposed via webhooks, allowing users to interact with their environment through a web browser.
+
+Now that you know what the framework is capable of, let’s talk about getting it up and running.
+
+---
+
+## Getting Started
+
+### Prerequisites
+Before diving into the code, let’s get a few things out of the way:
+- You’ll need Docker installed. Check out their [installation guide](https://docs.docker.com/get-docker/).
+- Python 3.x should also be installed on your system. If you haven’t already, it’s straightforward to get via [Python.org](https://www.python.org/downloads/).
+
+### Installation
+
+Once Docker and Python are set up, follow these steps to install the framework:
+
+1. Clone the repository:
+
+    ```bash
+    git clone https://github.com/your-repo/python-container-framework.git
+    cd python-container-framework
+    ```
+
+2. Build the custom Docker image that will be used for your containers. This image includes Python and `pip`:
+
+    ```bash
+    docker build -t my-python-container .
+    ```
+
+3. Install Python dependencies for the web interface:
+
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+4. Start the Flask application, which powers the admin dashboard and API:
+
+    ```bash
+    python app.py
+    ```
+
+5. Open your browser and visit `http://localhost:5000/admin/dashboard` to access the admin interface.
+
+At this point, everything is up and running! You’re ready to start creating containers and monitoring your Python environments.
+
+---
+
+## Container Management
+
+Each user gets a fully isolated Python environment spun up inside a Docker container. Containers are independent, and thanks to Docker’s resource limiting, you can control how much of the system's memory and CPU each container gets. This ensures that one runaway process doesn’t eat up all the resources.
+
+### Creating a Container
+Here’s how containers are created. Behind the scenes, the script uses Docker’s Python API to spin up containers from the custom `my-python-container` image:
+
+```python
+def create_python_container(container_name):
+    container = client.containers.run(
+        "my-python-container",  # Custom Docker image
+        name=container_name,
+        detach=True,
+        mem_limit="512m",  # Memory limit for the container
+        cpu_quota=50000,   # 0.5 cores
+        ports={'5000/tcp': None},
+        tty=True           # Keeps the container alive
+    )
+    return container
+```
+
+#### Why `tty=True`?
+Setting `tty=True` essentially tells Docker to keep the container running, even when no processes are actively using it. Think of it as keeping the lights on in the room, even when no one’s inside—this way, users can always access their environments without needing to restart containers every time.
+
+---
+
+## Global Configuration Panel
+
+The framework includes a global configuration panel accessible from the admin dashboard. The panel allows you to apply system-wide limits on CPU, memory, and network bandwidth.
+
+### Why a Configuration Panel?
+Think of the configuration panel as the command center. You don’t want to manually update each container’s resource limits all the time—especially when managing dozens (or even hundreds) of containers. This panel lets you apply changes to new containers easily, streamlining the process.
+
+### Available Configurations
+You can configure the following system-wide settings:
+- **Memory Limit**: The default memory (RAM) allocated to each new container.
+- **CPU Limit**: The maximum amount of CPU a container can use.
+- **Network Bandwidth**: Control how much bandwidth containers can consume.
+
+Here’s an example of how you might submit these configurations through the web interface:
+
+```html
+<form method="POST">
+    <label>Memory Limit: <input type="text" name="memory_limit"></label><br>
+    <label>CPU Limit: <input type="text" name="cpu_limit"></label><br>
+    <label>Network Bandwidth Limit: <input type="text" name="network_bandwidth_limit"></label><br>
+    <button type="submit">Save Configuration</button>
+</form>
+```
+
+Once you submit these values, they’re saved in the system’s configuration file (`config.json`), and the framework will apply them when spinning up new containers.
+
+```python
+config['default_memory_limit'] = request.form.get('memory_limit')
+config['default_cpu_limit'] = float(request.form.get('cpu_limit'))
+config['network_bandwidth_limit'] = request.form.get('network_bandwidth_limit')
+
+save_config(config)  # Save updated configuration to config.json
+```
+
+---
+
+## Admin Dashboard
+
+The Admin Dashboard is the heart of the system. It provides a real-time view of all active containers, their resource usage, uptime, and how many connections are active for each container. 
+
+Here’s the main dashboard route:
+
+```python
+@app.route('/admin/dashboard')
+def admin_dashboard():
+    containers = client.containers.list()
+    container_info = []
+
+    for container in containers:
+        info = get_container_info(container.id)
+        connections = connections_log.get(container.id, [])
+        container_info.append({
+            "id": container.id,
+            "name": container.name,
+            "status": info["status"],
+            "uptime": info["uptime"],
+            "connections": len(connections)
+        })
+
+    return render_template('dashboard.html', containers=container_info)
+```
+
+### What’s Displayed?
+- **ID**: Unique identifier for each container.
+- **Name**: The name assigned to the container.
+- **Status**: Whether the container is running or stopped.
+- **Uptime**: How long the container has been active.
+- **Connections**: The number of users connected to the container.
+
+This makes it easy for you (as an admin) to track the state of the system, making sure everything runs smoothly.
+
+---
+
+## Container Resource Limits
+
+Resource limits are important to keep your containers from hogging all the system’s resources. Each container can have specific limits set for:
+- **Memory (RAM)**
+- **CPU**
+- **Network Bandwidth**
+
+### Updating Container Limits
+Admins can adjust these limits at any time from the admin dashboard. Here’s the basic HTML form for updating limits:
+
+```html
+<form method="POST">
+    <label>Memory Limit: <input type="text" name="memory_limit"></label><br>
+    <label>CPU Limit: <input type="text" name="cpu_limit"></label><br>
+    <button type="submit">Update Limits</button>
+</form>
+```
+
+And here’s how those limits are applied in code:
+
+```python
+def set_container_limits(container_id, memory_limit="512m", cpu_limit=0.5):
+    container = client.containers.get(container_id)
+    container.update(mem_limit=memory_limit, cpu_quota=int(cpu_limit * 100000))
+    return f"Limits updated for container {container_id}"
+```
+
+- **Memory Limit**: Adjust the amount of RAM (e.g., `512m` for 512MB).
+- **CPU Quota**: A percentage of the CPU (e.g., `50000` is 50%).
+
+---
+
+## Docker Setup
+
+Docker is what makes this whole framework work. Each Python environment is its own Docker container, isolated from the host system and other containers.
+
+### Custom Docker Image
+We’ve built a custom Docker image that comes pre-packed with Python, `pip`, and some basic tools like `virtualenv`. To build the image, run:
+
+```bash
+docker build -t my-python-container .
+```
+
+If you want to make this image available on other systems, you can push it to Docker Hub:
+
+```bash
+docker tag my-python-container username/my-python-container
+docker push username/my-python-container
+```
+
+This image is used by the framework
+
+ to create isolated containers for each user. If you need to modify the environment inside the containers, this is where you would add any additional software or libraries.
+
+---
+
+## Final Thoughts
+
+The entire framework is designed to be flexible, secure, and easy to manage. It allows you to spin up containers on demand, control resource limits, and give users a fully isolated Python environment they can use through webhooks. With the admin dashboard and configuration panel, monitoring and managing your containers has never been easier.
+
+---

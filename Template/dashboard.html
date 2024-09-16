@@ -1,1 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script src="/static/dashboard.js"></script>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/admin/dashboard">Dashboard</a></li>
+                <li><a href="/admin/deploy">Deploy Container</a></li>
+                <li><a href="/admin/config">System Configuration</a></li>
+            </ul>
+        </nav>
+        <h1>Admin Dashboard</h1>
+    </header>
 
+    <section class="dashboard-summary">
+        <div class="stat-card">
+            <h3>Total Running Containers</h3>
+            <p id="total-containers">{{ containers | length }}</p>
+        </div>
+        <div class="stat-card">
+            <h3>Active Connections</h3>
+            <p id="active-connections">{{ total_connections }}</p>
+        </div>
+        <div class="stat-card">
+            <h3>System Uptime</h3>
+            <p id="system-uptime">{{ system_uptime }}</p>
+        </div>
+        <div class="stat-card">
+            <h3>Overall CPU Usage</h3>
+            <canvas id="cpu-usage-chart"></canvas>
+        </div>
+        <div class="stat-card">
+            <h3>Overall Memory Usage</h3>
+            <canvas id="memory-usage-chart"></canvas>
+        </div>
+    </section>
+
+    <section class="container-table">
+        <h2>Containers Overview</h2>
+        <input type="text" id="container-search" placeholder="Search containers by name..." onkeyup="filterContainers()">
+        <table>
+            <thead>
+                <tr>
+                    <th>Container Name</th>
+                    <th>Status</th>
+                    <th>Uptime</th>
+                    <th>Connections</th>
+                    <th>CPU Usage</th>
+                    <th>Memory Usage</th>
+                    <th>Controls</th>
+                </tr>
+            </thead>
+            <tbody id="container-list">
+                {% for container in containers %}
+                <tr>
+                    <td>{{ container.name }}</td>
+                    <td>{{ container.status }}</td>
+                    <td>{{ container.uptime }}</td>
+                    <td>{{ container.connections }}</td>
+                    <td>
+                        <canvas id="cpu-{{ container.id }}-chart"></canvas>
+                    </td>
+                    <td>
+                        <canvas id="memory-{{ container.id }}-chart"></canvas>
+                    </td>
+                    <td>
+                        <button onclick="controlContainer('{{ container.id }}', 'start')">Start</button>
+                        <button onclick="controlContainer('{{ container.id }}', 'stop')">Stop</button>
+                        <button onclick="controlContainer('{{ container.id }}', 'restart')">Restart</button>
+                        <button onclick="controlContainer('{{ container.id }}', 'remove')">Remove</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+    <script>
+        // Dashboard.js will include real-time updates using WebSockets/AJAX and chart rendering
+        renderContainerCharts();
+    </script>
+</body>
+</html>

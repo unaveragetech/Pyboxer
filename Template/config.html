@@ -1,1 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Configuration</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/admin/dashboard">Dashboard</a></li>
+                <li><a href="/admin/deploy">Deploy Container</a></li>
+                <li><a href="/admin/config">System Configuration</a></li>
+            </ul>
+        </nav>
+        <h1>System Configuration</h1>
+    </header>
 
+    <section class="config-form">
+        <form method="POST" action="/admin/config">
+            <h2>Resource Allocation</h2>
+            <label for="memory_limit">Default Memory Limit (e.g., 512m):</label>
+            <input type="text" id="memory_limit" name="memory_limit" value="{{ config.default_memory_limit }}" required>
+
+            <label for="cpu_limit">Default CPU Limit (e.g., 0.5 for 50%):</label>
+            <input type="number" id="cpu_limit" name="cpu_limit" step="0.1" value="{{ config.default_cpu_limit }}" required>
+
+            <label for="network_bandwidth_limit">Network Bandwidth Limit (e.g., 100mbps):</label>
+            <input type="text" id="network_bandwidth_limit" name="network_bandwidth_limit" value="{{ config.network_bandwidth_limit }}" required>
+
+            <h2>Notifications</h2>
+            <label for="email_alerts">Email Alerts:</label>
+            <input type="email" id="email_alerts" name="email_alerts" value="{{ config.email_alerts }}" placeholder="admin@example.com">
+
+            <label for="thresholds">Alert Thresholds (e.g., CPU > 80%):</label>
+            <input type="text" id="thresholds" name="thresholds" value="{{ config.thresholds }}" placeholder="cpu:80,memory:90">
+
+            <button type="submit">Save Configuration</button>
+        </form>
+    </section>
+
+    <section class="log-view">
+        <h2>System Logs</h2>
+        <pre>
+            {{ logs }}
+        </pre>
+    </section>
+
+    <footer>
+        <a href="/admin/dashboard">Back to Dashboard</a>
+    </footer>
+</body>
+</html>

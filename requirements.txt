@@ -1,2 +1,25 @@
-Flask==2.1.1
-docker==5.0.3
+# Core Framework and Tools
+flask==2.0.2                 # Web framework
+docker==5.0.3                # Docker API interaction
+distutils==0.1               # Older package required for docker
+requests==2.26.0             # HTTP requests handling
+
+# Flask Extensions and Additional Tools
+flask-sqlalchemy==2.5.1      # SQLAlchemy support for Flask
+flask-login==0.5.0           # User authentication for Flask
+flask-wtf==0.15.1            # WTForms integration with Flask for forms
+
+# Python Utilities and Tools
+gunicorn==20.1.0             # Production WSGI server for Flask
+psycopg2==2.9.1              # PostgreSQL database adapter for Python
+jinja2==3.0.3                # Templating engine used by Flask
+
+# Optional WebSocket and Asynchronous Support
+flask-socketio==5.1.1        # Real-time communication for Flask
+eventlet==0.32.0             # Asynchronous networking library
+gevent==21.8.0               # Coroutine-based networking library
+
+# Debugging and Development Tools
+werkzeug==2.0.2              # WSGI utility library (used by Flask for dev server)
+pytest==6.2.5                # Testing framework
+pytest-flask==1.2.0          # Flask-specific extensions for pytest

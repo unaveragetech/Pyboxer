@@ -1,1 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deploy New Container</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/admin/dashboard">Dashboard</a></li>
+                <li><a href="/admin/deploy">Deploy Container</a></li>
+                <li><a href="/admin/config">System Configuration</a></li>
+            </ul>
+        </nav>
+        <h1>Deploy a New Container</h1>
+    </header>
 
+    <section class="deploy-form">
+        <form method="POST" action="/admin/deploy">
+            <label for="name">Container Name:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="template">Choose Container Template:</label>
+            <select id="template" name="template" required>
+                <option value="my-python-container">Basic Python Environment</option>
+                <option value="data-science">Data Science Environment</option>
+                <option value="web-dev">Web Development Environment</option>
+            </select>
+
+            <label for="libraries">Initial Libraries (searchable):</label>
+            <input type="text" id="libraries" name="libraries" placeholder="flask, requests, numpy">
+
+            <label for="memory">Memory Limit:</label>
+            <input type="text" id="memory" name="memory" placeholder="e.g., 512m" required>
+
+            <label for="cpu">CPU Limit (0.5 = 50%):</label>
+            <input type="number" id="cpu" name="cpu" step="0.1" required>
+
+            <label for="storage">Storage Limit (in GB):</label>
+            <input type="number" id="storage" name="storage" step="0.5" required>
+
+            <button type="submit">Deploy</button>
+        </form>
+    </section>
+
+    <footer>
+        <a href="/admin/dashboard">Back to Dashboard</a>
+    </footer>
+</body>
+</html>

@@ -1,5 +1,3 @@
-Here's the entire `README.md` file, organized in a markdown code block. You can copy this and transfer it directly to GitHub:
-
 ```markdown
 # Flask Python Environment Container Management
 

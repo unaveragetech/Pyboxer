@@ -1,1 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Container Limits</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/admin/dashboard">Dashboard</a></li>
+                <li><a href="/admin/deploy">Deploy Container</a></li>
+                <li><a href="/admin/config">System Configuration</a></li>
+                <li><a href="/admin/limits">Container Limits</a></li>
+            </ul>
+        </nav>
+        <h1>Container Resource Limits</h1>
+    </header>
 
+    <section class="limits-form">
+        <form method="POST" action="/admin/limits">
+            <h2>Set Default Resource Limits for New Containers</h2>
+
+            <label for="default_memory">Default Memory Limit (MB):</label>
+            <input type="number" id="default_memory" name="default_memory" placeholder="1024" value="{{ default_memory_limit }}" required>
+
+            <label for="default_cpu">Default CPU Limit (Percentage):</label>
+            <input type="number" id="default_cpu" name="default_cpu" step="1" placeholder="50" value="{{ default_cpu_limit }}" required>
+
+            <label for="default_storage">Default Storage Limit (GB):</label>
+            <input type="number" id="default_storage" name="default_storage" placeholder="10" value="{{ default_storage_limit }}" required>
+
+            <label for="default_network">Default Network Bandwidth (Mbps):</label>
+            <input type="number" id="default_network" name="default_network" placeholder="100" value="{{ default_network_limit }}" required>
+
+            <h2>Set Individual Container Limits</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Container Name</th>
+                        <th>Memory (MB)</th>
+                        <th>CPU (%)</th>
+                        <th>Storage (GB)</th>
+                        <th>Network (Mbps)</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for container in containers %}
+                    <tr>
+                        <td>{{ container.name }}</td>
+                        <td><input type="number" name="memory_limit_{{ container.id }}" value="{{ container.memory_limit }}"></td>
+                        <td><input type="number" name="cpu_limit_{{ container.id }}" value="{{ container.cpu_limit }}"></td>
+                        <td><input type="number" name="storage_limit_{{ container.id }}" value="{{ container.storage_limit }}"></td>
+                        <td><input type="number" name="network_limit_{{ container.id }}" value="{{ container.network_limit }}"></td>
+                        <td>
+                            <button type="submit" formaction="/admin/limits/{{ container.id }}/update">Update</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <button type="submit">Save Default Limits</button>
+        </form>
+    </section>
+
+    <footer>
+        <a href="/admin/dashboard">Back to Dashboard</a>
+    </footer>
+</body>
+</html>

@@ -158,6 +158,6 @@ This project is licensed under the MIT License.
 ---
 
 You can clone the project from the repository here:  
-#[git clone https://github.com/unaveragetech/flask-container-management.git](https://github.com/unaveragetech/flask-container-management.git)
+#(https://github.com/unaveragetech/flask-container-management.git)
 ```
-[git clone https://github.com/unaveragetech/flask-container-management.git](https://github.com/unaveragetech/flask-container-management.git)
+(https://github.com/unaveragetech/flask-container-management.git)

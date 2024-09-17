@@ -1,0 +1,147 @@
+
+---
+
+# Flask Container Management System - Additional Information
+
+This document expands on various features, configurations, and the architecture of the Flask-based container management system. It also provides insights into system behavior, security models, and usage scenarios to help admins and developers make full use of the framework.
+
+---
+
+## 1. **Container Lifecycle Management**
+
+### 1.1. **Creating Containers**
+- **Endpoint**: `/create_container`
+- **Method**: `POST`
+- **Description**: This endpoint initializes a new Docker container running an isolated Python environment. By default, it uses the `python:3.9-slim` image with `pip` pre-installed.
+- **Request Body**: JSON
+  - `name` (string): The desired name of the container. Example:
+    ```json
+    {
+      "name": "python_container_1"
+    }
+    ```
+- **Response**: 
+  - `container_id`: The unique ID assigned to the new container.
+  - `webhook_url`: The URL for sending HTTP/HTTPS requests to this container.
+  
+### 1.2. **Container Status**
+- **Endpoint**: `/container/<container_id>/status`
+- **Method**: `GET`
+- **Description**: Retrieves the current status of the container.
+- **Response**: JSON
+  - `status`: The state of the container (e.g., running, stopped, paused).
+  - `cpu_usage`: Current CPU usage of the container.
+  - `memory_usage`: Memory usage statistics.
+  - `created_at`: Timestamp of when the container was initialized.
+  
+### 1.3. **Modifying Container Resources**
+- **Endpoint**: `/admin/container/<container_id>/limits`
+- **Method**: `POST`
+- **Description**: Allows the admin to set or adjust the memory and CPU limits for a container.
+- **Request Body**: JSON
+  - `cpu_limit`: Limit on CPU cores, such as `0.5` for 50% of a core.
+  - `memory_limit`: Memory limit, formatted in MB (e.g., `512m`).
+  
+---
+
+## 2. **Webhook Monitoring and Security**
+
+### 2.1. **Monitored Requests**
+- **Description**: All HTTP/HTTPS requests sent from containers are logged and monitored. The system keeps track of every outgoing request to ensure containers don't perform unauthorized actions.
+
+### 2.2. **Request Format**
+- Each request is intercepted, logged, and sanitized to prevent any potential security issues.
+- **Logged Information**:
+  - **HTTP Method**: The request method (GET, POST, etc.).
+  - **URL**: The destination of the request.
+  - **Headers**: Metadata, including tokens, content types, etc.
+  - **Body Content**: If any data is being sent (in the case of POST or PUT requests).
+  - **Timestamp**: The exact time the request was made.
+
+### 2.3. **Admin Viewing Logs**
+- **Endpoint**: `/admin/monitoring`
+- **Method**: `GET`
+- **Description**: Returns the logs in JSON format. Alternatively, access `/admin/monitoring/page` for a web-based HTML log viewer.
+  
+---
+
+## 3. **Package Installation in Containers**
+
+### 3.1. **Verified Pip Packages**
+- Containers are configured to allow only **verified** Python packages to be installed via `pip`. This ensures that users cannot install potentially harmful or unverified packages.
+
+### 3.2. **Installing a Package**
+- **Endpoint**: `/install_package`
+- **Method**: `POST`
+- **Description**: Allows the admin or user to install a verified Python package in a specific container.
+- **Request Body**: JSON
+  - `container_id`: The unique ID of the container.
+  - `package_name`: The name of the Python package to be installed. Example:
+    ```json
+    {
+      "container_id": "your-container-id",
+      "package_name": "requests"
+    }
+    ```
+
+### 3.3. **Admin-Controlled Package List**
+- Admins can maintain a **whitelist** of verified packages that can be installed within containers. This list ensures that only approved packages can be used. To modify this list:
+  - Update the `allowed_packages.json` file, adding/removing package names.
+  
+---
+
+## 4. **Configuration and Environment Variables**
+
+### 4.1. **Docker and Flask Configuration**
+- The Docker environment variables used by the system need to be set properly for network isolation and resource control. Some crucial variables include:
+  - `DOCKER_HOST`: Used to specify the host machine Docker is running on.
+  - `DOCKER_TLS_VERIFY`: Ensures that Docker operations are verified for security reasons.
+  - `DOCKER_CERT_PATH`: Path to Docker's certificates, useful if using TLS.
+
+### 4.2. **System-Wide Settings**
+- System admins can control the default behavior and limitations of containers via `config.json`.
+  - **Default Memory Limit**: The default `mem_limit` applied to new containers.
+  - **Default CPU Quota**: The CPU allocation set for containers.
+  - **Pip Whitelist**: The list of allowed `pip` packages.
+  - **Network Policies**: Defines what networks containers can communicate with.
+
+---
+
+## 5. **API Usage Guide**
+
+### 5.1. **API Structure**
+- The framework is designed to expose most actions via a simple, REST-based API. Each major functionality—such as container creation, package installation, resource monitoring—is exposed as an endpoint that can be accessed programmatically.
+
+### 5.2. **Basic API Workflow**
+1. **Create a Container**: Use the `/create_container` endpoint.
+2. **Install a Package**: Once the container is running, use the `/install_package` endpoint to add necessary Python packages.
+3. **Monitor Requests**: Track outgoing HTTP/HTTPS requests from the container via `/admin/monitoring`.
+4. **Adjust Resources**: If needed, modify the container’s resources via `/admin/container/<container_id>/limits`.
+
+### 5.3. **Error Handling**
+- Each endpoint includes standard error handling to ensure smooth operations. In the event of an error, the response will include:
+  - `status_code`: HTTP status code indicating the nature of the error.
+  - `error_message`: A detailed message explaining the issue.
+  - Example error response:
+    ```json
+    {
+      "status_code": 400,
+      "error_message": "Container not found"
+    }
+    ```
+
+---
+
+## 6. **Security Overview**
+
+### 6.1. **Network Isolation**
+- Containers are launched within an isolated Docker network, ensuring that external communication is restricted. Only verified traffic is allowed out of the container.
+
+### 6.2. **Sanitization and Logging**
+- All outbound HTTP/HTTPS traffic is sanitized to prevent malicious requests. Headers and body content are scrubbed of sensitive data, and logs are kept for auditing purposes.
+
+### 6.3. **Limitations on Network Access**
+- By default, containers have restricted access to the internet. This restriction can be lifted temporarily by the admin when installing necessary packages via `pip`.
+
+---
+
